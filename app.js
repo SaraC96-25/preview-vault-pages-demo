@@ -2,6 +2,7 @@ const DB_NAME = "preview-vault-db";
 const STORE_NAME = "projects";
 const DEMO_SLUG = "sara-preview-example";
 const DEMO_PASSWORD = "cliente2026";
+const DEMO_PASSWORD_HASH = "80a750bc189741e34692b43d88c5d97c09d9a7e65a9b1cbc828820b6c111c61f";
 
 const SAMPLE_PROJECT_HTML = String.raw`
 <!DOCTYPE html>
@@ -338,10 +339,10 @@ async function handleViewerOpen() {
     return;
   }
 
-  const project = await getProject(slug);
+  const project = await loadProjectBySlug(slug);
   if (!project) {
     dom.viewerFeedback.textContent =
-      "Preview non trovata in questo browser. L'esempio pubblico resta comunque accessibile.";
+      "Preview non trovata in questo browser. Su GitHub Pages le preview caricate restano locali al browser che le ha create.";
     return;
   }
 
@@ -442,9 +443,9 @@ function syncRouteWithUi() {
     activatePanel("viewer-panel");
     dom.viewerSlug.value = route.slug;
     dom.viewerFeedback.textContent =
-      "Questa rotta funziona per l'esempio pubblico e per le preview presenti nello stesso browser.";
+      "L'esempio pubblico e sempre disponibile. Le preview caricate manualmente funzionano invece solo nello stesso browser che le ha salvate.";
 
-    getProject(route.slug).then((project) => {
+    loadProjectBySlug(route.slug).then((project) => {
       if (!project) {
         return;
       }
@@ -650,7 +651,7 @@ async function ensureDemoProject() {
     name: "Template anteprima cliente",
     clientName: "Progetto di esempio",
     note: "Apri questo esempio per verificare subito il viewer responsive e il flusso di accesso.",
-    passwordHash: await sha256(DEMO_PASSWORD),
+    passwordHash: DEMO_PASSWORD_HASH,
     createdAt: new Date().toISOString(),
     payload: {
       kind: "html",
@@ -659,6 +660,31 @@ async function ensureDemoProject() {
       files: [],
     },
   });
+}
+
+async function loadProjectBySlug(slug) {
+  if (slug === DEMO_SLUG) {
+    return getBuiltInDemoProject();
+  }
+
+  return getProject(slug);
+}
+
+function getBuiltInDemoProject() {
+  return {
+    slug: DEMO_SLUG,
+    name: "Template anteprima cliente",
+    clientName: "Progetto di esempio",
+    note: "Apri questo esempio per verificare subito il viewer responsive e il flusso di accesso.",
+    payload: {
+      kind: "html",
+      rootFile: "index.html",
+      html: SAMPLE_PROJECT_HTML,
+      files: [],
+    },
+    passwordHash: DEMO_PASSWORD_HASH,
+    createdAt: null,
+  };
 }
 
 function clearObjectUrls() {
