@@ -1,6 +1,6 @@
 const DB_NAME = "preview-vault-db";
 const STORE_NAME = "projects";
-const DEMO_SLUG = "demo-wow-landing";
+const DEMO_SLUG = "sara-preview-example";
 const DEMO_PASSWORD = "cliente2026";
 
 const SAMPLE_PROJECT_HTML = String.raw`
@@ -9,13 +9,14 @@ const SAMPLE_PROJECT_HTML = String.raw`
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WOW Landing Preview</title>
+    <title>Sara Cicchinelli Preview Example</title>
     <style>
       :root {
-        --ink: #102b31;
-        --sand: #f6efe3;
-        --brand: #ed7a3c;
-        --mint: #d7efe8;
+        --ink: #28323c;
+        --paper: #f7fbfe;
+        --brand: #5aa9e6;
+        --deep: #22313f;
+        --soft: #dceffd;
       }
       * { box-sizing: border-box; }
       body {
@@ -23,8 +24,8 @@ const SAMPLE_PROJECT_HTML = String.raw`
         font-family: Arial, sans-serif;
         color: var(--ink);
         background:
-          radial-gradient(circle at top right, rgba(237,122,60,.18), transparent 28%),
-          linear-gradient(180deg, #fffefb 0%, var(--sand) 100%);
+          radial-gradient(circle at top right, rgba(90,169,230,.18), transparent 28%),
+          linear-gradient(180deg, #ffffff 0%, var(--paper) 100%);
       }
       .hero {
         display: grid;
@@ -39,6 +40,7 @@ const SAMPLE_PROJECT_HTML = String.raw`
         padding: 10px 14px;
         border-radius: 999px;
         background: rgba(16,43,49,.08);
+        color: var(--deep);
         margin-bottom: 20px;
         font-size: 13px;
         letter-spacing: .08em;
@@ -67,19 +69,19 @@ const SAMPLE_PROJECT_HTML = String.raw`
         font-weight: 700;
       }
       .cta.primary {
-        background: var(--ink);
+        background: var(--deep);
         color: #fff;
       }
       .cta.secondary {
         color: var(--ink);
-        background: rgba(16,43,49,.08);
+        background: rgba(90,169,230,.14);
       }
       .stage {
-        background: linear-gradient(135deg, rgba(16,43,49,.95), rgba(31,90,97,.95));
+        background: linear-gradient(135deg, rgba(34,49,63,.96), rgba(62,92,121,.92));
         color: #fff;
         border-radius: 32px;
         padding: 28px;
-        box-shadow: 0 22px 60px rgba(16,43,49,.28);
+        box-shadow: 0 22px 60px rgba(34,49,63,.28);
       }
       .screen {
         background: #fff;
@@ -95,7 +97,7 @@ const SAMPLE_PROJECT_HTML = String.raw`
         margin-top: 18px;
       }
       .module {
-        background: var(--mint);
+        background: var(--soft);
         border-radius: 16px;
         padding: 16px;
       }
@@ -114,26 +116,26 @@ const SAMPLE_PROJECT_HTML = String.raw`
   <body>
     <section class="hero">
       <div>
-        <span class="badge">Preview cliente</span>
-        <h1>Una landing curata per mostrare il progetto senza attrito.</h1>
+        <span class="badge">Anteprima cliente</span>
+        <h1>Un ambiente chiaro per presentare il progetto con precisione.</h1>
         <p>
-          Questa preview demo serve a far vedere il comportamento responsive del
-          layout. Passando tra desktop, tablet e mobile puoi raccontare il
-          progetto con un'interfaccia piu vicina a una review cliente.
+          Questo esempio mostra come condividere una pagina in modo ordinato,
+          lasciando al cliente la possibilita di verificare il comportamento
+          responsive tra desktop, tablet e mobile.
         </p>
         <div class="cta-row">
-          <a class="cta primary" href="#">Richiedi feedback</a>
-          <a class="cta secondary" href="#">Apri specifiche</a>
+          <a class="cta primary" href="#">Raccogli feedback</a>
+          <a class="cta secondary" href="#">Consulta note</a>
         </div>
       </div>
       <div class="stage">
-        <strong>Composizione visuale</strong>
+        <strong>Vista del layout</strong>
         <div class="screen">
-          <h2>Blocchi principali</h2>
+          <h2>Elementi principali</h2>
           <div class="modules">
-            <div class="module">Hero con CTA</div>
-            <div class="module">USP e prova sociale</div>
-            <div class="module">Focus sul responsive</div>
+            <div class="module">Header e messaggio chiave</div>
+            <div class="module">Contenuti e prove di fiducia</div>
+            <div class="module">Controllo della resa responsive</div>
           </div>
         </div>
       </div>
@@ -258,7 +260,7 @@ function activatePanel(panelId) {
     },
     "notes-panel": {
       mode: "Note",
-      hint: "Trovi qui i limiti della demo statica e la direzione consigliata.",
+      hint: "Trovi qui limiti tecnici e direzione consigliata per la versione evoluta.",
     },
   };
 
@@ -323,7 +325,7 @@ async function handleProjectSubmit(event) {
   dom.shareFeedback.textContent =
     zipFile
       ? "Preview salvata nel browser. Il viewer puo aprirla su questo dispositivo."
-      : "Preview demo salvata usando il layout seedato.";
+      : "Esempio salvato usando il layout predefinito.";
   dom.projectForm.reset();
 }
 
@@ -339,7 +341,7 @@ async function handleViewerOpen() {
   const project = await getProject(slug);
   if (!project) {
     dom.viewerFeedback.textContent =
-      "Preview non trovata in questo browser. La demo pubblica resta accessibile con il progetto seedato.";
+      "Preview non trovata in questo browser. L'esempio pubblico resta comunque accessibile.";
     return;
   }
 
@@ -382,7 +384,7 @@ async function renderProjects() {
             <h4>${escapeHtml(project.name)}</h4>
             <p class="helper-text">${escapeHtml(project.clientName)} · ${escapeHtml(project.slug)}</p>
           </div>
-          <span class="pill neutral">${project.payload.kind === "zip" ? "ZIP" : "Demo"}</span>
+          <span class="pill neutral">${project.payload.kind === "zip" ? "ZIP" : "Esempio"}</span>
         </div>
         <p class="helper-text">${escapeHtml(project.note || "Nessuna nota inserita.")}</p>
         <div class="project-actions">
@@ -440,7 +442,7 @@ function syncRouteWithUi() {
     activatePanel("viewer-panel");
     dom.viewerSlug.value = route.slug;
     dom.viewerFeedback.textContent =
-      "Questa rotta funziona bene per il progetto demo pubblico e per le preview presenti nello stesso browser.";
+      "Questa rotta funziona per l'esempio pubblico e per le preview presenti nello stesso browser.";
 
     getProject(route.slug).then((project) => {
       if (!project) {
@@ -627,9 +629,9 @@ async function ensureDemoProject() {
 
   await saveProject({
     slug: DEMO_SLUG,
-    name: "WOW Landing Demo",
-    clientName: "Cliente demo",
-    note: "Apri questa preview seedata per vedere subito il viewer responsive in azione.",
+    name: "Template anteprima cliente",
+    clientName: "Progetto di esempio",
+    note: "Apri questo esempio per verificare subito il viewer responsive e il flusso di accesso.",
     passwordHash: await sha256(DEMO_PASSWORD),
     createdAt: new Date().toISOString(),
     payload: {

@@ -1,15 +1,16 @@
 :root {
-  --bg: #f4efe7;
-  --bg-strong: #e8dcc8;
-  --card: rgba(255, 255, 255, 0.82);
-  --card-strong: rgba(255, 255, 255, 0.94);
-  --line: rgba(43, 36, 28, 0.14);
-  --text: #1d1916;
-  --muted: #6b6258;
-  --brand: #135d66;
-  --brand-soft: #d8eeef;
-  --accent: #c96f3b;
-  --shadow: 0 20px 60px rgba(35, 28, 20, 0.12);
+  --bg: #eef4f8;
+  --bg-strong: #dce8f1;
+  --card: rgba(255, 255, 255, 0.86);
+  --card-strong: rgba(255, 255, 255, 0.95);
+  --line: rgba(47, 58, 70, 0.14);
+  --text: #28323c;
+  --muted: #5c6976;
+  --brand: #5aa9e6;
+  --brand-deep: #22313f;
+  --brand-soft: #dceffd;
+  --accent: #8bbfe8;
+  --shadow: 0 20px 60px rgba(34, 49, 63, 0.12);
   --radius-lg: 28px;
   --radius-md: 18px;
   --radius-sm: 12px;
@@ -32,9 +33,9 @@ body {
   font-family: "Space Grotesk", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(19, 93, 102, 0.16), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(201, 111, 59, 0.16), transparent 28%),
-    linear-gradient(180deg, #f9f5ef 0%, var(--bg) 100%);
+    radial-gradient(circle at top left, rgba(90, 169, 230, 0.18), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(34, 49, 63, 0.12), transparent 28%),
+    linear-gradient(180deg, #f8fbfd 0%, var(--bg) 100%);
 }
 
 button,
@@ -56,7 +57,7 @@ button {
 .sidebar {
   padding: 28px;
   border-right: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(245, 250, 254, 0.72);
   backdrop-filter: blur(16px);
   position: sticky;
   top: 0;
@@ -83,6 +84,7 @@ button {
   font-family: "Instrument Serif", serif;
   font-size: 2.8rem;
   line-height: 0.95;
+  color: var(--brand-deep);
 }
 
 .brand-copy,
@@ -118,9 +120,9 @@ p {
 
 .tab-button.is-active,
 .viewport-button.is-active {
-  background: var(--text);
+  background: var(--brand-deep);
   color: #fff;
-  border-color: var(--text);
+  border-color: var(--brand-deep);
 }
 
 .status-card,
@@ -243,7 +245,7 @@ textarea {
   border: 0;
   border-radius: 999px;
   padding: 13px 18px;
-  background: linear-gradient(135deg, var(--brand), #0f4045);
+  background: linear-gradient(135deg, var(--brand), #3d8fcc);
   color: #fff;
 }
 
@@ -263,7 +265,7 @@ textarea {
 }
 
 .pill.neutral {
-  background: rgba(29, 25, 22, 0.08);
+  background: rgba(34, 49, 63, 0.08);
   color: var(--muted);
 }
 
@@ -331,7 +333,7 @@ textarea {
   padding: 22px;
   border-radius: calc(var(--radius-lg) - 8px);
   background:
-    linear-gradient(135deg, rgba(19, 93, 102, 0.08), rgba(201, 111, 59, 0.06)),
+    linear-gradient(135deg, rgba(90, 169, 230, 0.12), rgba(34, 49, 63, 0.08)),
     rgba(255, 255, 255, 0.8);
   border: 1px solid var(--line);
   overflow: auto;
@@ -373,7 +375,7 @@ textarea {
 }
 
 .accent-card {
-  background: linear-gradient(145deg, rgba(19, 93, 102, 0.92), rgba(15, 64, 69, 0.92));
+  background: linear-gradient(145deg, rgba(34, 49, 63, 0.96), rgba(52, 72, 89, 0.96));
 }
 
 .accent-card h3,
