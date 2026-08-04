@@ -479,11 +479,9 @@ function slugify(value) {
 }
 
 async function buildZipPayload(file) {
-  if (!window.JSZip) {
-    throw new Error("La libreria ZIP non e ancora disponibile.");
-  }
+  const zipLibrary = await getZipLibrary();
 
-  const zip = await window.JSZip.loadAsync(file);
+  const zip = await zipLibrary.loadAsync(file);
   const files = [];
 
   await Promise.all(
@@ -520,6 +518,26 @@ async function buildZipPayload(file) {
     rootFile,
     files,
   };
+}
+
+async function getZipLibrary() {
+  if (window.JSZip) {
+    return window.JSZip;
+  }
+
+  await wait(150);
+
+  if (window.JSZip) {
+    return window.JSZip;
+  }
+
+  throw new Error("Il modulo ZIP non e stato caricato correttamente. Ricarica la pagina e riprova.");
+}
+
+function wait(ms) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
 }
 
 async function buildPreviewHtml(payload) {
