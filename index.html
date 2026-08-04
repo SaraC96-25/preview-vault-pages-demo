@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preview Vault</title>
+    <meta
+      name="description"
+      content="Demo GitHub Pages per gestire anteprime cliente con area admin e viewer responsive."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+      integrity="sha512-xXDvecy9QJQvk2vOBN8sM5n25i+5QfDFi1Cdm42Hcps225y7sY9qsK0k12gHgdGXN53BJ38qRAjPR9U1FVLtZg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <p class="eyebrow">Preview system</p>
+          <h1>Preview Vault</h1>
+          <p class="brand-copy">
+            Una demo statica per GitHub Pages che simula area admin, accesso
+            cliente e viewer responsive.
+          </p>
+        </div>
+
+        <nav class="panel-tabs" aria-label="Sezioni">
+          <button class="tab-button is-active" data-panel-target="admin-panel">
+            Admin
+          </button>
+          <button class="tab-button" data-panel-target="viewer-panel">
+            Viewer cliente
+          </button>
+          <button class="tab-button" data-panel-target="notes-panel">
+            Note
+          </button>
+        </nav>
+
+        <section class="status-card">
+          <p class="status-label">Modalita attiva</p>
+          <strong id="active-mode-label">Admin</strong>
+          <p id="route-hint" class="status-copy">
+            Crea una preview e genera un link condivisibile.
+          </p>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <section class="panel is-active" id="admin-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Area admin</p>
+              <h2>Carica un progetto e prepara la condivisione</h2>
+            </div>
+            <div class="pill-row">
+              <span class="pill">ZIP supportato</span>
+              <span class="pill">Password lato client</span>
+              <span class="pill">Responsive presets</span>
+            </div>
+          </div>
+
+          <div class="grid two-columns">
+            <form id="project-form" class="card form-card">
+              <label>
+                Nome progetto
+                <input
+                  id="project-name"
+                  name="projectName"
+                  type="text"
+                  placeholder="Landing WOW Cliente"
+                  required
+                />
+              </label>
+
+              <label>
+                Cliente
+                <input
+                  id="client-name"
+                  name="clientName"
+                  type="text"
+                  placeholder="Rossi Arredamenti"
+                  required
+                />
+              </label>
+
+              <label>
+                Slug link
+                <input
+                  id="project-slug"
+                  name="projectSlug"
+                  type="text"
+                  placeholder="rossi-arredamenti-preview"
+                  pattern="[a-z0-9-]+"
+                  required
+                />
+              </label>
+
+              <label>
+                Password cliente
+                <input
+                  id="project-password"
+                  name="projectPassword"
+                  type="password"
+                  placeholder="Scegli una password"
+                  minlength="6"
+                  required
+                />
+              </label>
+
+              <label>
+                ZIP del progetto
+                <input
+                  id="project-zip"
+                  name="projectZip"
+                  type="file"
+                  accept=".zip"
+                />
+                <small>
+                  Cerca `index.html` nello ZIP e genera una preview locale.
+                </small>
+              </label>
+
+              <label>
+                Messaggio di accompagnamento
+                <textarea
+                  id="project-note"
+                  name="projectNote"
+                  rows="4"
+                  placeholder="Ciao, trovi qui l'anteprima responsive del progetto."
+                ></textarea>
+              </label>
+
+              <div class="action-row">
+                <button type="submit" class="primary-button">
+                  Genera preview
+                </button>
+                <button type="button" class="secondary-button" id="load-demo">
+                  Carica demo pronta
+                </button>
+              </div>
+            </form>
+
+            <div class="card share-card">
+              <div class="share-head">
+                <div>
+                  <p class="eyebrow">Condivisione</p>
+                  <h3>Link cliente</h3>
+                </div>
+                <span id="project-badge" class="pill neutral">Nessun progetto</span>
+              </div>
+
+              <label>
+                URL da inviare
+                <div class="copy-row">
+                  <input id="share-link" type="text" readonly />
+                  <button type="button" class="secondary-button" data-copy-target="share-link">
+                    Copia
+                  </button>
+                </div>
+              </label>
+
+              <label>
+                Password
+                <div class="copy-row">
+                  <input id="share-password" type="text" readonly />
+                  <button type="button" class="secondary-button" data-copy-target="share-password">
+                    Copia
+                  </button>
+                </div>
+              </label>
+
+              <label>
+                Messaggio pronto
+                <textarea id="share-message" rows="8" readonly></textarea>
+              </label>
+
+              <p id="share-feedback" class="helper-text">
+                La demo include anche un progetto seedato pubblico per provare il flusso cliente.
+              </p>
+            </div>
+          </div>
+
+          <section class="card">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Archivio locale</p>
+                <h3>Preview salvate nel browser</h3>
+              </div>
+              <p class="helper-text">
+                In questa versione GitHub Pages i progetti creati si salvano nel browser corrente.
+              </p>
+            </div>
+            <div id="projects-list" class="project-list"></div>
+          </section>
+        </section>
+
+        <section class="panel" id="viewer-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Viewer cliente</p>
+              <h2>Anteprima protetta con viewport responsive</h2>
+            </div>
+            <div class="pill-row">
+              <span class="pill">Desktop</span>
+              <span class="pill">Tablet</span>
+              <span class="pill">Mobile</span>
+            </div>
+          </div>
+
+          <div class="grid viewer-grid">
+            <div class="card access-card">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Accesso</p>
+                  <h3>Apri una preview</h3>
+                </div>
+              </div>
+
+              <label>
+                Slug progetto
+                <input id="viewer-slug" type="text" placeholder="rossi-arredamenti-preview" />
+              </label>
+
+              <label>
+                Password
+                <input id="viewer-password" type="password" placeholder="Inserisci la password" />
+              </label>
+
+              <div class="action-row">
+                <button id="open-preview" class="primary-button" type="button">
+                  Entra nella preview
+                </button>
+                <button id="open-demo-preview" class="secondary-button" type="button">
+                  Apri demo
+                </button>
+              </div>
+
+              <p id="viewer-feedback" class="helper-text">
+                Nessuna preview aperta.
+              </p>
+            </div>
+
+            <div class="card stage-card">
+              <div class="stage-toolbar">
+                <div>
+                  <p id="current-project-name" class="stage-title">Progetto demo</p>
+                  <p id="current-project-meta" class="helper-text">
+                    Seleziona una preview per visualizzarla qui.
+                  </p>
+                </div>
+
+                <div class="viewport-switch" role="tablist" aria-label="Viewport">
+                  <button class="viewport-button is-active" data-viewport="desktop">Desktop</button>
+                  <button class="viewport-button" data-viewport="tablet">Tablet</button>
+                  <button class="viewport-button" data-viewport="mobile">Mobile</button>
+                </div>
+              </div>
+
+              <div class="preview-stage">
+                <div id="viewport-frame" class="viewport-frame desktop">
+                  <iframe
+                    id="preview-frame"
+                    title="Anteprima progetto"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-modals"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="notes-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Note di progetto</p>
+              <h2>Come usare questa base su GitHub Pages</h2>
+            </div>
+          </div>
+
+          <div class="grid notes-grid">
+            <article class="card note-card">
+              <h3>Quello che questa demo fa bene</h3>
+              <ul>
+                <li>Mostra il flusso admin e cliente in un'unica app.</li>
+                <li>Accetta ZIP frontend e prova a renderizzare `index.html` con asset relativi.</li>
+                <li>Genera link personalizzati con slug e password lato client.</li>
+                <li>Offre un viewer responsive desktop, tablet e mobile.</li>
+              </ul>
+            </article>
+
+            <article class="card note-card">
+              <h3>Limite strutturale di GitHub Pages</h3>
+              <ul>
+                <li>Non c'e un backend reale per salvare upload e password in modo centralizzato.</li>
+                <li>I nuovi progetti creati qui restano nel browser dell'admin che li ha caricati.</li>
+                <li>Per una condivisione privata vera serve storage remoto e autenticazione server-side.</li>
+              </ul>
+            </article>
+
+            <article class="card note-card accent-card">
+              <h3>Evoluzione consigliata</h3>
+              <p>
+                Tieni questa UI su GitHub Pages solo come concept pubblico, poi collega
+                la stessa interfaccia a Supabase o Cloudflare R2 per avere upload reali,
+                link per cliente e password gestite in sicurezza.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
