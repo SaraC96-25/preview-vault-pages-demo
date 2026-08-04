@@ -3,6 +3,7 @@ const STORE_NAME = "projects";
 const DEMO_SLUG = "sara-preview-example";
 const DEMO_PASSWORD = "cliente2026";
 const DEMO_PASSWORD_HASH = "80a750bc189741e34692b43d88c5d97c09d9a7e65a9b1cbc828820b6c111c61f";
+const ACCESS_STORAGE_PREFIX = "preview-access:";
 
 const SAMPLE_PROJECT_HTML = String.raw`
 <!DOCTYPE html>
@@ -173,6 +174,15 @@ function bindDom() {
     "share-message",
     "share-feedback",
     "projects-list",
+    "client-login-screen",
+    "client-preview-shell",
+    "client-login-form",
+    "client-preview-password",
+    "client-login-feedback",
+    "client-preview-name",
+    "client-preview-meta",
+    "client-preview-frame",
+    "client-viewport-frame",
     "viewer-slug",
     "viewer-password",
     "viewer-feedback",
@@ -211,6 +221,7 @@ function bindEvents() {
 
   dom.projectForm.addEventListener("submit", handleProjectSubmit);
   dom.openPreview.addEventListener("click", handleViewerOpen);
+  dom.clientLoginForm.addEventListener("submit", handleClientRouteLogin);
   dom.openDemoPreview.addEventListener("click", async () => {
     dom.viewerSlug.value = DEMO_SLUG;
     dom.viewerPassword.value = DEMO_PASSWORD;
@@ -269,6 +280,12 @@ function activatePanel(panelId) {
   dom["route-hint"].textContent = labels[panelId].hint;
 }
 
+function setClientRouteMode(enabled) {
+  document.body.classList.toggle("client-route", enabled);
+  dom.clientLoginScreen.hidden = !enabled;
+  dom.clientPreviewShell.hidden = true;
+}
+
 function setViewport(viewport) {
   dom.viewportButtons.forEach((button) => {
     button.classList.toggle("is-active", button.dataset.viewport === viewport);
@@ -276,6 +293,11 @@ function setViewport(viewport) {
 
   dom.viewportFrame.classList.remove("desktop", "tablet", "mobile");
   dom.viewportFrame.classList.add(viewport);
+
+  if (dom.clientViewportFrame) {
+    dom.clientViewportFrame.classList.remove("desktop", "tablet", "mobile");
+    dom.clientViewportFrame.classList.add(viewport);
+  }
 }
 
 async function handleProjectSubmit(event) {
@@ -357,12 +379,53 @@ async function handleViewerOpen() {
   dom.viewerFeedback.textContent = `Accesso riuscito per ${project.clientName}.`;
 }
 
+async function handleClientRouteLogin(event) {
+  event.preventDefault();
+
+  const route = parseHash();
+  const slug = route?.slug;
+  const password = dom.clientPreviewPassword.value;
+
+  if (!slug || !password) {
+    dom.clientLoginFeedback.textContent = "Inserisci la password per continuare.";
+    return;
+  }
+
+  const project = await loadProjectBySlug(slug);
+  if (!project) {
+    dom.clientLoginFeedback.textContent =
+      "Questa anteprima non e disponibile in questo browser. Su GitHub Pages le preview caricate restano locali al browser che le ha create.";
+    return;
+  }
+
+  const incomingHash = await sha256(password);
+  if (incomingHash !== project.passwordHash) {
+    dom.clientLoginFeedback.textContent = "Password non corretta.";
+    return;
+  }
+
+  grantRouteAccess(slug);
+  dom.clientPreviewPassword.value = "";
+  dom.clientLoginFeedback.textContent = "";
+  await openClientPreview(project);
+}
+
 async function openProjectInViewer(project) {
   activatePanel("viewer-panel");
   const { html } = await buildPreviewHtml(project.payload);
   dom.previewFrame.srcdoc = html;
   dom["current-project-name"].textContent = project.name;
   dom["current-project-meta"].textContent = `${project.clientName} · ${project.slug}`;
+}
+
+async function openClientPreview(project) {
+  setClientRouteMode(true);
+  dom.clientLoginScreen.hidden = true;
+  dom.clientPreviewShell.hidden = false;
+  const { html } = await buildPreviewHtml(project.payload);
+  dom.clientPreviewFrame.srcdoc = html;
+  dom.clientPreviewName.textContent = project.name;
+  dom.clientPreviewMeta.textContent = `${project.clientName} · ${project.slug}`;
 }
 
 async function renderProjects() {
@@ -435,23 +498,32 @@ function buildShareLink(slug) {
 function syncRouteWithUi() {
   const route = parseHash();
   if (!route) {
+    setClientRouteMode(false);
     activatePanel("admin-panel");
     return;
   }
 
   if (route.type === "project") {
-    activatePanel("viewer-panel");
-    dom.viewerSlug.value = route.slug;
-    dom.viewerFeedback.textContent =
-      "L'esempio pubblico e sempre disponibile. Le preview caricate manualmente funzionano invece solo nello stesso browser che le ha salvate.";
+    setClientRouteMode(true);
 
-    loadProjectBySlug(route.slug).then((project) => {
+    loadProjectBySlug(route.slug).then(async (project) => {
       if (!project) {
+        dom.clientLoginFeedback.textContent =
+          "Questa anteprima non e disponibile in questo browser.";
+        dom.clientLoginScreen.hidden = false;
+        dom.clientPreviewShell.hidden = true;
         return;
       }
 
-      dom.currentProjectName.textContent = project.name;
-      dom.currentProjectMeta.textContent = `${project.clientName} · ${project.slug}`;
+      if (hasRouteAccess(route.slug)) {
+        await openClientPreview(project);
+        return;
+      }
+
+      dom.clientLoginScreen.hidden = false;
+      dom.clientPreviewShell.hidden = true;
+      dom.clientPreviewPassword.value = "";
+      dom.clientLoginFeedback.textContent = "";
     });
   }
 }
@@ -685,6 +757,14 @@ function getBuiltInDemoProject() {
     passwordHash: DEMO_PASSWORD_HASH,
     createdAt: null,
   };
+}
+
+function grantRouteAccess(slug) {
+  sessionStorage.setItem(`${ACCESS_STORAGE_PREFIX}${slug}`, "granted");
+}
+
+function hasRouteAccess(slug) {
+  return sessionStorage.getItem(`${ACCESS_STORAGE_PREFIX}${slug}`) === "granted";
 }
 
 function clearObjectUrls() {

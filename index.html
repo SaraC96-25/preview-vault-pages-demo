@@ -19,6 +19,57 @@
     <script defer src="./app.js"></script>
   </head>
   <body>
+    <section class="client-login-screen" id="client-login-screen" hidden>
+      <div class="client-login-card">
+        <p class="client-login-eyebrow">Sara Cicchinelli</p>
+        <h1 class="client-login-title">Preview Desk</h1>
+
+        <form id="client-login-form" class="client-login-form">
+          <label class="client-login-label" for="client-preview-password">
+            Password
+          </label>
+          <input
+            id="client-preview-password"
+            type="password"
+            placeholder="Inserisci qui la tua password"
+            autocomplete="current-password"
+          />
+          <button type="submit" class="client-login-button">
+            Accedi all'anteprima
+          </button>
+          <p id="client-login-feedback" class="client-login-feedback"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="client-preview-shell" id="client-preview-shell" hidden>
+      <div class="client-preview-topbar">
+        <div>
+          <p class="client-preview-eyebrow">Anteprima riservata</p>
+          <h2 id="client-preview-name" class="client-preview-name">Preview Desk</h2>
+          <p id="client-preview-meta" class="client-preview-meta"></p>
+        </div>
+
+        <div class="client-preview-controls">
+          <div class="viewport-switch" role="tablist" aria-label="Viewport cliente">
+            <button class="viewport-button is-active" data-viewport="desktop">Desktop</button>
+            <button class="viewport-button" data-viewport="tablet">Tablet</button>
+            <button class="viewport-button" data-viewport="mobile">Mobile</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="client-preview-stage">
+        <div id="client-viewport-frame" class="viewport-frame desktop">
+          <iframe
+            id="client-preview-frame"
+            title="Anteprima cliente"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-modals"
+          ></iframe>
+        </div>
+      </div>
+    </section>
+
     <div class="page-shell">
       <aside class="sidebar">
         <div class="brand">
